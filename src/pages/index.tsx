@@ -1,5 +1,7 @@
 import type { NextPage } from "next";
-import { useState } from "react";
+import { HtmlProps } from "next/dist/shared/lib/html-context";
+import Link from "next/link";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 
@@ -12,11 +14,11 @@ import {
 import { RootState } from "../store";
 
 const Home: NextPage = () => {
-  const [amount, setAmount] = useState();
+  const { count } = useSelector((state: RootState) => state.counter);
+
+  const [amount, setAmount] = useState(count);
 
   const dispatch = useDispatch();
-
-  const { count } = useSelector((state: RootState) => state.counter);
 
   function addAmount() {
     if (Number(amount) <= 0) {
@@ -26,24 +28,45 @@ const Home: NextPage = () => {
     }
   }
 
+  function atualizarValor(e: React.ChangeEvent<HTMLInputElement>) {
+    const newValue = e.target.value;
+    setAmount(Number(newValue));
+
+    /*
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+            const newValue = event.target.value;
+            setAmount(Number(newValue));
+          }
+    */
+  }
+
   return (
-    <div className={styles.container}>
-      <span>{count}</span>
-      <button onClick={() => dispatch(increment())} className={styles.buttom}>
-        +
-      </button>
-      <button onClick={() => dispatch(decrement())} className={styles.buttom}>
-        -
-      </button>
+    <>
+      <div className={styles.container}>
+        <span>{count}</span>
+        <button onClick={() => dispatch(increment())} className={styles.buttom}>
+          +
+        </button>
+        <button onClick={() => dispatch(decrement())} className={styles.buttom}>
+          -
+        </button>
 
-      <input
-        type="number"
-        value={amount}
-        onChange={(e) => setAmount(e.target.value)}
-      />
+        <input
+          type="number"
+          placeholder="amount"
+          value={amount}
+          onChange={atualizarValor}
+        />
 
-      <button onClick={addAmount}>adicionar valor</button>
-    </div>
+        <button onClick={addAmount}>adicionar valor</button>
+
+        <div>
+          <Link href={"/produtos"}>
+            <button>Produtos</button>
+          </Link>
+        </div>
+      </div>
+    </>
   );
 };
 
